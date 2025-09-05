@@ -27,6 +27,5 @@ Automatically calls someone until they respond
 ```plaintext
 src/userplugins/constcal/
 ├── index.ts          # Main plugin entry point
-├── types.ts          # Type definitions
 └── README.md         # Documentation
 ```
