@@ -1,11 +1,10 @@
-# Constcal Plugin
-Automatically calls a specified user until they respond.
+# Constcal
+Automatically calls someone until they respond
 
 ## Features
-- Automatically initiates voice calls to a target user
-- Waits 30 seconds for response
-- Leaves call if no response received
-- Continues attempting calls until successful connection
+- Automatically detects target user ID when used in DMs
+- Configurable call duration and total duration limits
+- Automatic cleanup of resources
 - Built-in `/constcal` command for easy usage
 
 ## Installation
@@ -14,14 +13,15 @@ Automatically calls a specified user until they respond.
    git clone https://github.com/Matoumatio/Constcal.git ~/vencord/src/userplugins/constcal
    ```
 2. Restart Discord/Vencord
-3. Configure the plugin settings to specify the target user ID
 
 ## Usage
-1. Open Discord Settings
-2. Navigate to Plugins > Constcal
-3. Enter the target user's ID in the settings
-4. Use `/constcal start` to begin automatic calling
-5. Use `/constcal stop` to halt the process
+1. Open a DM with the target user
+2. Type `/constcal start` to begin automatic calling
+3. Type `/constcal stop` to halt the process
+
+## Settings
+- **Call Duration**: Time to wait between calls (in seconds, default: 30)
+- **Total Duration**: Maximum time to keep calling (in seconds, default: 3600)
 
 ## File Structure
 ```plaintext
