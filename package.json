@@ -1,0 +1,8 @@
+{
+  "name": "constcal",
+  "version": "1.0.0",
+  "dependencies": {
+    "@vencord/discord-types": "^1.0.0",
+    "discord-types": "^0.12.0"
+  }
+}
