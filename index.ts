@@ -1,7 +1,7 @@
 import definePlugin from "@utils/types";
 import { findByProps } from "@webpack";
 import { getCurrentChannel } from "@utils/discord";
-import { Message } from "discord-types/general";
+import type { Message } from "discord-types/channel";
 
 // Types
 interface ConstcalConfig {
