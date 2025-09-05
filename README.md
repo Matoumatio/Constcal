@@ -28,5 +28,7 @@ Automatically calls someone until they respond
 src/userplugins/constcal/
 ├── index.ts          # Main plugin entry point
 ├── types.ts          # Type definitions
+├── package.json      # 
+├── tsconfig.ts       #
 └── README.md         # Documentation
 ```
