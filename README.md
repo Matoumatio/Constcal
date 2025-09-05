@@ -11,7 +11,7 @@ Automatically calls a specified user until they respond.
 ## Installation
 1. Clone this repository into your Vencord plugins directory:
    ```bash
-   git clone https://github.com/yourusername/Constcal.git ~/vencord/src/userplugins/constcal
+   git clone https://github.com/Matoumatio/Constcal.git ~/vencord/src/userplugins/constcal
    ```
 2. Restart Discord/Vencord
 3. Configure the plugin settings to specify the target user ID
