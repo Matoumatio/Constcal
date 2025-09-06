@@ -20,8 +20,8 @@ Automatically calls someone until they respond
 3. Type `/constcal stop` to halt the process
 
 ## Settings
-- **Call Duration**: Time to wait between calls (in seconds, default: 30)
-- **Total Duration**: Maximum time to keep calling (in seconds, default: 3600 (0 : illimited))
+- **Call Duration**: Time to wait between calls (in seconds, default : 30)
+- **Total Duration**: Maximum time to keep calling (in seconds, default : 3600 (0 : illimited))
 
 ## File Structure
 ```plaintext
