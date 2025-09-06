@@ -12,7 +12,7 @@ Automatically calls someone until they respond
    ```bash
    git clone https://github.com/Matoumatio/Constcal.git ~/vencord/src/userplugins/constcal
    ```
-2. Restart Discord/Vencord
+2. Rebuild your Discord/Vencord
 
 ## Usage
 1. Open a DM with the target user
@@ -21,7 +21,7 @@ Automatically calls someone until they respond
 
 ## Settings
 - **Call Duration**: Time to wait between calls (in seconds, default: 30)
-- **Total Duration**: Maximum time to keep calling (in seconds, default: 3600)
+- **Total Duration**: Maximum time to keep calling (in seconds, default: 3600 (0 : illimited))
 
 ## File Structure
 ```plaintext
