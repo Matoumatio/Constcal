@@ -4,7 +4,6 @@ Automatically calls someone until they respond
 ## Features
 - Automatically detects target user ID when used in DMs
 - Configurable call duration and total duration limits
-- Automatic cleanup of resources
 - Built-in `/constcal` command for easy usage
 
 ## Installation
