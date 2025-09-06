@@ -1,4 +1,4 @@
-# Constcal
+# Constcal (WIP)
 Automatically calls someone until they respond
 
 ## Features
