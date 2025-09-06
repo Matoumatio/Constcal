@@ -25,6 +25,6 @@ Automatically calls someone until they respond
 ## File Structure
 ```plaintext
 src/userplugins/constcal/
-├── index.ts          # Main plugin entry point
+├── index.ts          # Main plugin
 └── README.md         # Documentation
 ```
