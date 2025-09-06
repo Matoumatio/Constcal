@@ -3,14 +3,7 @@ import { definePluginSettings } from "@api/Settings";
 import { OptionType } from "@utils/types";
 import { findByPropsLazy } from "@webpack";
 import { getCurrentChannel } from "@utils/discord";
-import { sendBotMessage } from "@api/Commands";
-
-// Types
-interface ConstcalConfig {
-    targetUserId: string;
-    callDuration: number;
-    totalDuration: number;
-}
+import { sendBotMessage, ApplicationCommandOptionType, ApplicationCommandInputType } from "@api/Commands";
 
 interface ConstcalState {
     isActive: boolean;
@@ -20,9 +13,17 @@ interface ConstcalState {
     timeoutId?: number;
 }
 
-// Find required Discord functions lazily
-const { call } = findByPropsLazy("call");
-const { selectVoiceChannel } = findByPropsLazy("selectVoiceChannel");
+// Grab Discord’s call-related functions dynamically
+const callModule =
+    findByPropsLazy("call") ||
+    findByPropsLazy("startCall") ||
+    findByPropsLazy("ring") ||
+    findByPropsLazy("callUser");
+
+const voiceModule =
+    findByPropsLazy("selectVoiceChannel") ||
+    findByPropsLazy("setChannel");
+
 
 let state: ConstcalState = {
     isActive: false,
@@ -38,21 +39,11 @@ const settings = definePluginSettings({
         default: 30
     },
     totalDuration: {
-        type: OptionType.NUMBER, 
-        description: "Total time to keep calling (seconds)",
+        type: OptionType.NUMBER,
+        description: "Total time to keep calling (seconds, 0 = unlimited)",
         default: 3600
     }
 });
-
-async function initiateCall(channelId: string): Promise<boolean> {
-    try {
-        await call(channelId);
-        return true;
-    } catch (error) {
-        console.error("Failed to initiate call:", error);
-        return false;
-    }
-}
 
 function stopCalling() {
     state.isActive = false;
@@ -60,119 +51,144 @@ function stopCalling() {
         clearTimeout(state.timeoutId);
         state.timeoutId = undefined;
     }
-    // Try to leave any active call
+
     try {
-        selectVoiceChannel(null);
-    } catch (error) {
-        console.error("Error leaving call:", error);
+        if (voiceModule?.selectVoiceChannel) {
+            voiceModule.selectVoiceChannel(null);
+        } else if (voiceModule?.setChannel) {
+            voiceModule.setChannel(null);
+        }
+    } catch (error: any) {
+        if (state.currentTargetId) {
+            sendBotMessage(state.currentTargetId, {
+                content: `An Error occurred while executing command "constcal":\n\`\`\`ts\n${error?.stack ?? error}\n\`\`\``
+            });
+        }
     }
+}
+
+async function tryCall(channelId: string) {
+    if (!callModule) {
+        throw new Error("No call module found");
+    }
+
+    const methods = ["call", "startCall", "ring", "callUser"];
+    for (const m of methods) {
+        const fn = (callModule as any)[m];
+        if (typeof fn === "function") {
+            await fn(channelId);
+            return;
+        }
+    }
+
+    throw new Error("No working call function in callModule");
 }
 
 async function startCallingLoop(channelId: string) {
     if (!state.isActive) return;
-    
-    // Check if total duration exceeded
+
     const elapsed = (Date.now() - state.startTime) / 1000;
-    if (elapsed >= settings.store.totalDuration) {
+
+    // Only enforce total duration if greater than 0
+    if (settings.store.totalDuration > 0 && elapsed >= settings.store.totalDuration) {
         stopCalling();
         sendBotMessage(channelId, {
             content: "⏰ Total duration reached. Stopping Constcal."
         });
         return;
     }
-    
-    // Attempt to call
-    const success = await initiateCall(channelId);
-    if (!success) {
+
+    try {
+        await tryCall(channelId);
+    } catch (error: any) {
         sendBotMessage(channelId, {
-            content: "❌ Failed to initiate call. Stopping Constcal."
+            content: `An Error occurred while executing command "constcal":\n\`\`\`ts\n${error?.stack ?? error}\n\`\`\``
         });
         stopCalling();
         return;
     }
-    
-    // Schedule next call attempt
+
     state.timeoutId = window.setTimeout(() => {
         startCallingLoop(channelId);
     }, settings.store.callDuration * 1000);
 }
 
 export default definePlugin({
-    name: "Constcal", 
+    name: "Constcal",
     description: "Automatically calls someone until they respond",
     authors: [{
         name: "Matoumatio",
         id: 756864470026027100n
     }],
-    
+
     settings,
-    
+
     commands: [{
         name: "constcal",
         description: "Start or stop automatic calling",
+        inputType: ApplicationCommandInputType.BUILT_IN,
         options: [{
             name: "action",
             description: "Action to perform (start/stop)",
-            type: 3, // STRING type
+            type: ApplicationCommandOptionType.STRING,
             required: true,
             choices: [{
                 name: "start",
-                value: "start"
+                value: "start",
+                label: "start"
             }, {
-                name: "stop", 
-                value: "stop"
+                name: "stop",
+                value: "stop",
+                label: "stop"
             }]
         }],
         execute(args, ctx) {
             const action = args[0]?.value || args[0];
             const channel = getCurrentChannel();
-            
+
             if (!channel) {
                 return sendBotMessage(ctx.channel.id, {
                     content: "❌ No active channel found!"
                 });
             }
-            
+
             switch (action) {
                 case "start":
-                    // Check if it's a DM
-                    if (channel.type !== 1) { // DM channel type
+                    if (channel.type !== 1) {
                         return sendBotMessage(ctx.channel.id, {
                             content: "❌ This command only works in DM channels!"
                         });
                     }
-                    
+
                     if (state.isActive) {
                         return sendBotMessage(ctx.channel.id, {
                             content: "⚠️ Constcal is already running! Use `/constcal stop` to stop it."
                         });
                     }
-                    
-                    // Start the calling process
+
                     state.isActive = true;
                     state.startTime = Date.now();
                     state.currentTargetId = channel.id;
-                    
+
                     sendBotMessage(ctx.channel.id, {
-                        content: `🔄 Starting Constcal... Will call for ${settings.store.totalDuration}s with ${settings.store.callDuration}s intervals.`
+                        content: `🔄 Starting Constcal. Will call for ${settings.store.totalDuration === 0 ? "unlimited time" : settings.store.totalDuration + "s"} with ${settings.store.callDuration}s intervals.`
                     });
-                    
-                    // Start calling loop with a small delay
+
                     setTimeout(() => startCallingLoop(channel.id), 1000);
                     break;
-                    
+
                 case "stop":
                     if (!state.isActive) {
                         return sendBotMessage(ctx.channel.id, {
                             content: "⚠️ Constcal is not currently running."
                         });
                     }
-                    
+
                     stopCalling();
                     return sendBotMessage(ctx.channel.id, {
                         content: "⏹️ Constcal stopped successfully."
                     });
-                    
+
                 default:
                     return sendBotMessage(ctx.channel.id, {
                         content: "❌ Invalid action. Use `start` or `stop`."
@@ -180,13 +196,9 @@ export default definePlugin({
             }
         }
     }],
-    
-    start() {
-        console.log("Constcal plugin started");
-    },
-    
+
+    start() {},
     stop() {
-        console.log("Constcal plugin stopped");
         stopCalling();
     }
 });
