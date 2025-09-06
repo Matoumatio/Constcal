@@ -6,7 +6,7 @@ Automatically calls someone until they respond
 
 ## Features
 - Configurable call duration and total duration limits
-- Built-in `/constcal` command for easy usage
+- Built-in `/constcal` command (maybe a button in the future)
 
 ## Installation
 1. Clone this repository into your Vencord plugins directory
@@ -16,7 +16,7 @@ Automatically calls someone until they respond
 2. Rebuild your Vencord client (check <https://docs.vencord.dev/installing/#building-vencord>)
 
 ## Usage
-1. Open a DM with the target user
+1. Open a DM
 2. Type `/constcal start` to begin automatic calling
 3. Type `/constcal stop` to stop the process
 
