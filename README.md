@@ -2,7 +2,7 @@
 Automatically calls someone until they respond
 
 ## Warning
-- THIS PLUGIN MAY BE BROKING DISCORD TOS, USE AT YOUR OWN RISK
+- ⚠️ THIS PLUGIN MAY BE BROKING DISCORD TOS, USE AT YOUR OWN RISK ⚠️
 
 ## Features
 - Automatically detects target user ID when used in DMs
