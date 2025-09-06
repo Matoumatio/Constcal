@@ -21,7 +21,7 @@ Automatically calls someone until they respond
 
 ## Settings
 - **Call Duration**: Time to wait between calls (in seconds, default : 30)
-- **Total Duration**: Maximum time to keep calling (in seconds, default : 3600 (0 : illimited))
+- **Total Duration**: Maximum time to keep calling (in seconds, default : 3600 (0 : unlimited))
 
 ## File Structure
 ```plaintext
