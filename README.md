@@ -2,7 +2,7 @@
 Automatically calls someone until they respond
 
 ## Warning
-⚠️ THIS PLUGIN MAY BE BROKING DISCORD TOS, USE AT YOUR OWN RISK ⚠️
+⚠️ Modifying the Discord client and using scripts is against Discord's ToS, use at your own risk ⚠️
 
 ## Features
 - Configurable call duration and total duration limits
