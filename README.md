@@ -12,7 +12,7 @@ Automatically calls someone until they respond
    ```bash
    git clone https://github.com/Matoumatio/Constcal.git ~/vencord/src/userplugins/Constcal
    ```
-2. (Rebuild your Discord/Vencord)[https://docs.vencord.dev/installing/#building-vencord]
+2. [Rebuild your Discord/Vencord]: https://docs.vencord.dev/installing/#building-vencord
 
 ## Usage
 1. Open a DM with the target user
